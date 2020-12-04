@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Flask test</title>
+  </head>
+  <body>
+    <h1>Flask test</h1>
+    <img src="{{ url_for('static', filename='bobcat.jpg') }}" width="400" />
+    <pre id="target" />
+    <script type="text/javascript" src="{{ url_for('static', filename='app.js') }}"></script>
+    <script type="text/javascript">
+      const target = document.getElementById("target");
+      create_stream("{{ url_for('api.stream') }}", target);
+    </script>
+  </body>
+</html>
