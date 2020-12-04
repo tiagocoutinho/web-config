@@ -1,8 +1,15 @@
 from flask import Flask, render_template
 
 
-def create_app():
+def patch_route(app, prefix=''):
+    if prefix:
+        route = app.route
+        app.route = lambda rule, **opts: route(prefix + rule, **opts)
+
+
+def create_app(url_prefix='/bla'):
     app = Flask(__name__)
+    patch_route(app, url_prefix)
 
     @app.route('/')
     def index():
@@ -10,6 +17,5 @@ def create_app():
 
     from .api import api
     app.register_blueprint(api)
-
     return app
 
