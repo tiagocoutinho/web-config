@@ -1,10 +1,10 @@
-from flask import Blueprint, Response
+import time
+import threading
+
+from flask import Blueprint, Response, redirect, url_for
 
 
 def source():
-    import time
-    import threading
-
     name = threading.current_thread().name
     for i in range(40, 0, -1):
         time.sleep(0.25)
@@ -12,8 +12,12 @@ def source():
         yield f"data: {data}\n\n"
 
 
-api = Blueprint("api", __name__, url_prefix="/api")
+api = Blueprint("api", __name__)
 
+
+@api.route('/')
+def index():
+    return redirect(url_for('index'))
 
 @api.route('/hello')
 def hello_world():
@@ -23,4 +27,3 @@ def hello_world():
 @api.route('/stream')
 def stream():
     return Response(source(), mimetype="text/event-stream")
-
