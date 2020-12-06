@@ -18,18 +18,10 @@ FLASK_APP=hello.app flask run -h 0
 
 ### Standalone WSGI containers
 
-#### *uWSGI*
-
-(see also [uwsgi.ini](uwsgi.ini))
+#### *gevent*
 
 ```
-uwsgi --http 0:5000 --module hello.wsgi:app --threads=10
-```
-
-If you want gevent please patch early:
-
-```
-uwsgi --http 0:5000 --module hello.wsgi:app --gevent-early-monkey-patch --gevent=100
+python -m hello.gevent -h 0 -p 5000
 ```
 
 #### *gunicorn*
@@ -50,6 +42,20 @@ gunicorn -b 0:5000 --worker-class=gevent -e HELLO_BASE_URL=/hello hello.wsgi:app
 raw_env = ["HELLO_BASE_URL=/hello"]
 ```
 
+#### *uWSGI*
+
+(see also [uwsgi.ini](uwsgi.ini))
+
+```
+uwsgi --http 0:5000 --module hello.wsgi:app --threads=10
+```
+
+If you want gevent please patch early:
+
+```
+uwsgi --http 0:5000 --module hello.wsgi:app --gevent-early-monkey-patch --gevent=100
+```
+
 ### Run in nginx
 
 Prepare directories for first run:
@@ -60,16 +66,14 @@ mkdir -p var/run/nginx
 mkdir -p var/tmp/nginx
 ```
 
-#### *uWSGI*
-
-(see also [uwsgi-nginx.ini](uwsgi-nginx.ini) & [nginx-uwsgi.conf](nginx-uwsgi.conf))
+#### *gevent*
 
 ```
-uwsgi --ini ./uwsgi-nginx.ini
+python -m hello.gevent -h 0 -p 5000 -b /gevent
 ```
 
 ```
-nginx -p . -c nginx-uwsgi.conf
+nginx -p . -c nginx-gevent.conf
 ```
 
 #### *gunicorn*
@@ -82,4 +86,16 @@ gunicorn -c ./gunicorn.conf.py hello.wsgi:app
 
 ```
 nginx -p . -c nginx-gunicorn.conf
+```
+
+#### *uWSGI*
+
+(see also [uwsgi-nginx.ini](uwsgi-nginx.ini) & [nginx-uwsgi.conf](nginx-uwsgi.conf))
+
+```
+uwsgi --ini ./uwsgi-nginx.ini
+```
+
+```
+nginx -p . -c nginx-uwsgi.conf
 ```
