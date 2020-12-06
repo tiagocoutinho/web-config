@@ -90,6 +90,8 @@ nginx -p . -c nginx-gunicorn.conf
 
 #### *uWSGI*
 
+**Important**: I did not manage to get SSE working with uwsgi yet!
+
 (see also [uwsgi-nginx.ini](uwsgi-nginx.ini) & [nginx-uwsgi.conf](nginx-uwsgi.conf))
 
 ```
