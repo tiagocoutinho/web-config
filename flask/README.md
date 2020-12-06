@@ -1,9 +1,9 @@
 ## Launching
 
 After preparing with one of the options below, point your web browser to
-http://0:5000/hello.
+http://localhost:5000.
 
-REST API in http://0:5000/hello/api (ex: http://0:5000/hello/api/hello).
+REST API in http://localhost:5000/hello/api (ex: http://localhost:5000/api/hello).
 
 ### Basic development run
 
@@ -12,7 +12,9 @@ FLASK_APP=hello.app flask run -h 0
 ```
 
 * `FLASK_APP=hello.wsgi` should also work
-* custom URL prefix: `FLASK_APP=hello.app.create_app('/world')`
+* custom URL prefix:
+  1. `FLASK_APP=hello.app.create_app('/hello')` or
+  2. add env `HELLO_BASE_URL=/hello`
 
 ### Standalone WSGI containers
 
@@ -25,6 +27,7 @@ uwsgi --http 0:5000 --module hello.wsgi:app --threads=10
 ```
 
 If you want gevent please patch early:
+
 ```
 uwsgi --http 0:5000 --module hello.wsgi:app --gevent-early-monkey-patch --gevent=100
 ```
@@ -32,7 +35,19 @@ uwsgi --http 0:5000 --module hello.wsgi:app --gevent-early-monkey-patch --gevent
 #### *gunicorn*
 
 ```
-gunicorn --bind 0:5000 hello.wsgi:app --worker-class=gevent
+gunicorn -b 0:5000 --worker-class=gevent hello.wsgi:app
+```
+
+*Different base URL:*
+
+```
+gunicorn -b 0:5000 --worker-class=gevent -e HELLO_BASE_URL=/hello hello.wsgi:app
+```
+
+...or, in a config file add:
+
+```python
+raw_env = ["HELLO_BASE_URL=/hello"]
 ```
 
 ### Run in nginx
@@ -62,7 +77,7 @@ nginx -p . -c nginx-uwsgi.conf
 (see also [gunicorn.conf.py](gunicorn.conf.py) & [nginx-gunicorn.conf](nginx-gunicorn.conf))
 
 ```
-gunicorn -c ./gunicorn.conf.py  "hello.app:create_app('/gunicorn')"
+gunicorn -c ./gunicorn.conf.py hello.wsgi:app
 ```
 
 ```

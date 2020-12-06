@@ -5,7 +5,11 @@ def url_join(*path):
     return ("/" + "/".join(path)).replace("//", "/")
 
 
-def create_app(base_url='/hello'):
+def create_app(base_url=None):
+    if base_url is None:
+        import os
+        base_url = os.environ.get("HELLO_BASE_URL", "/")
+
     from .api import api
 
     app = Flask(__name__, static_url_path=url_join(base_url, "static"))

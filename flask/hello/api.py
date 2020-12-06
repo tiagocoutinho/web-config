@@ -19,6 +19,7 @@ api = Blueprint("api", __name__)
 def index():
     return redirect(url_for('index'))
 
+
 @api.route('/hello')
 def hello_world():
     return dict(hello='world')
